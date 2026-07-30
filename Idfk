@@ -1,0 +1,92 @@
+local Config = {}
+
+-- CATEGORY DATA
+Config.Categories = {
+    ["Mains"] = {
+        "Fried Chicken", "Flamin' Hot Chicken", "Candied Chicken", "Shallot Chicken",
+        "Snowy Chicken", "Cheesy Snow Chicken", "Blue Taki Chicken", "Baked Mac n Cheese",
+        "Birria Tacos", "Seafood Boil", "Honey Seafood Boil", "Spicy Seafood Boil"
+    },
+    ["Ramen"] = {
+        "Carbonara", "Spicy", "2x Spicy", "Tempura", "Corn Cheese", "Salmon",
+        "Roe", "Salmon Roe", "Sardines", "Dumplings", "Chicken Tenders",
+        "Spam", "Sausage", "Eggs"
+    },
+    ["Sushi"] = {
+        "Tuna", "Tuna Roe", "2x Tuna", "Trout", "Trout Roe", "2x Trout",
+        "Salmon", "Seabass", "Yellowtail", "Kohada", "Organic Usuzukuri",
+        "Flounder", "Usuzukuri", "Spicy Tentacle", "King Tentacle",
+        "Salmon Pizza", "Tuna Pizza", "Sushi Taco", "Tuna Taco", "Salmon Taco"
+    },
+    ["Sushi Packs"] = {
+        "Flounder", "Usuzukuri", "Spicy Tentacle", "King Tentacle", "Salmon",
+        "Tuna", "Yellowtail", "Kohada", "Seabass", "Organic Usuzukuri"
+    },
+    ["Drinks"] = {
+        "Orange Soda", "Lime Soda", "Lemon Soda", "Grapefruit Soda", "Milk",
+        "Strawberry Milk", "Choco Milk", "Banana Milk", "Blueberry Milk",
+        "Water", "Apple Juice", "Cola"
+    },
+    ["Snacks"] = {
+        "Blue Taki Dog", "Mozzarella Sticks", "Onion Boil", "Spicy Enoki",
+        "Blackbean Enoki", "Sea Grapes", "Crab Claws", "Honey Crab Claws",
+        "Spicy Crab Claws", "Mussels", "Honey Mussels", "Spicy Mussels"
+    },
+    ["Desserts"] = {
+        "Choco Buttons Cereal", "Strawberry Cookie Cereal", "Matcha Cookie Cereal",
+        "Macaron Cereal", "Strawberry Pie", "Well Done Brownie", "Gooey Brownie",
+        "Gooey Velvet", "Gooey Dubai", "Gooey Vanilla", "Matcha Chewy Cookie",
+        "Dubai Chewy Cookie", "Apple Pie", "Blueberry Pie"
+    }
+}
+
+-- REMOTE EVENT PAYLOAD DEFINITIONS (Matching Decompiled Logic)
+Config.RemoteMap = {
+    ["SweetsCerealEvent"]   = { FoodType = "SweetsCereal" },
+    ["SushiEvent"]          = { FoodType = "Sushi" },
+    ["SeafoodEvents"]       = { FoodType = "Seafood" },
+    ["SeaGrapesEvent"]      = { FoodType = "SeaGrapes" },
+    ["OnionBoilEvent"]      = { FoodType = "OnionBoil" },
+    ["NoodlesSkilletEvent"] = { FoodType = "SkilletNoodles", ExtraKey = "Noodletype", ExtraVal = "Carbonara" },
+    ["MacNCheeseEvent"]     = { FoodType = "MacnCheese" },
+    ["EnokiEvent"]          = { FoodType = "Enoki" },
+    ["DrumstickEvent"]      = { FoodType = "Drumstick" },
+    ["CorndogEvent"]        = { FoodType = "Corndog" },
+    ["ChewyCookieEvent"]    = { FoodType = "ChewyCookie" },
+    ["CheeseStickEvent"]    = { FoodType = "CheeseStick" },
+    ["BirriaTacoEvent"]     = { FoodType = "BirriaTaco" }
+}
+
+-- TELEPORT LOCATIONS
+Config.TableLocations = {
+    ["Table 1"] = Vector3.new(-63.73, -1.06, -21.11),
+    ["Table 2 (VIP / Upper)"] = Vector3.new(-26.18, 11.51, -67.02),
+    ["Table 3"] = Vector3.new(-24.43, 3.86, 19.05),
+    ["Table 4"] = Vector3.new(-24.44, 3.86, 6.65),
+    ["Table 5"] = Vector3.new(-24.44, 3.86, -5.65),
+    ["Table 6"] = Vector3.new(-24.44, 3.86, -17.95),
+    ["Table 7"] = Vector3.new(10.35, 3.86, -12.43),
+    ["Table 8"] = Vector3.new(-58.58, -1.01, 2.55),
+    ["Table 9"] = Vector3.new(-83.07, -1.06, 4.91)
+}
+
+-- PAYLOAD BUILDER FUNCTION
+function Config.BuildPayload(eventName, tool, bite)
+    local data = Config.RemoteMap[eventName]
+    if not data then return nil end
+
+    local payload = {
+        ["Action"]   = "Bite",
+        ["FoodType"] = data.FoodType,
+        ["Bite"]     = bite,
+        ["Tool"]     = tool
+    }
+
+    if data.ExtraKey then
+        payload[data.ExtraKey] = data.ExtraVal
+    end
+
+    return payload
+end
+
+return Config
